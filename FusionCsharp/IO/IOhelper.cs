@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using FusionCsharp.model;
 using System.Drawing;
+using System.Windows.Forms;
+
 /// <summary>
 /// 文件操作类
 /// </summary>
 namespace FusionCsharp.IO
 {
+
     public class IOhelper
     {
+
         #region 读取TXT文件
 
         //得到主视点和摄像机颜色图
@@ -91,6 +94,8 @@ namespace FusionCsharp.IO
             return curBitmap;
         }
         #endregion
+
+ 
 
     }
 }

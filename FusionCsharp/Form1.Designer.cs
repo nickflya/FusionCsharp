@@ -32,11 +32,11 @@
             this.panel_control = new System.Windows.Forms.Panel();
             this.button_fusion = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.button_colordata_camera_bmp = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox_colordata_camera_bmp = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,11 +44,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panel_draw = new System.Windows.Forms.Panel();
+            this.openFileDialog_colordata_camera_bmp = new System.Windows.Forms.OpenFileDialog();
+            this.videoSourcePlayer = new AForge.Controls.VideoSourcePlayer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panel_control.SuspendLayout();
+            this.panel_draw.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -72,11 +75,11 @@
             // 
             this.panel_control.Controls.Add(this.button_fusion);
             this.panel_control.Controls.Add(this.button4);
-            this.panel_control.Controls.Add(this.button3);
+            this.panel_control.Controls.Add(this.button_colordata_camera_bmp);
             this.panel_control.Controls.Add(this.button2);
             this.panel_control.Controls.Add(this.textBox4);
             this.panel_control.Controls.Add(this.button1);
-            this.panel_control.Controls.Add(this.textBox3);
+            this.panel_control.Controls.Add(this.textBox_colordata_camera_bmp);
             this.panel_control.Controls.Add(this.textBox2);
             this.panel_control.Controls.Add(this.textBox1);
             this.panel_control.Controls.Add(this.label4);
@@ -107,13 +110,14 @@
             this.button4.TabIndex = 15;
             this.button4.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // button_colordata_camera_bmp
             // 
-            this.button3.Location = new System.Drawing.Point(247, 208);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(24, 23);
-            this.button3.TabIndex = 16;
-            this.button3.UseVisualStyleBackColor = true;
+            this.button_colordata_camera_bmp.Location = new System.Drawing.Point(247, 208);
+            this.button_colordata_camera_bmp.Name = "button_colordata_camera_bmp";
+            this.button_colordata_camera_bmp.Size = new System.Drawing.Size(24, 23);
+            this.button_colordata_camera_bmp.TabIndex = 16;
+            this.button_colordata_camera_bmp.UseVisualStyleBackColor = true;
+            this.button_colordata_camera_bmp.Click += new System.EventHandler(this.button_colordata_camera_bmp_Click);
             // 
             // button2
             // 
@@ -139,13 +143,13 @@
             this.button1.TabIndex = 18;
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // textBox3
+            // textBox_colordata_camera_bmp
             // 
-            this.textBox3.Location = new System.Drawing.Point(33, 210);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(208, 21);
-            this.textBox3.TabIndex = 11;
+            this.textBox_colordata_camera_bmp.Location = new System.Drawing.Point(33, 210);
+            this.textBox_colordata_camera_bmp.Name = "textBox_colordata_camera_bmp";
+            this.textBox_colordata_camera_bmp.ReadOnly = true;
+            this.textBox_colordata_camera_bmp.Size = new System.Drawing.Size(208, 21);
+            this.textBox_colordata_camera_bmp.TabIndex = 11;
             // 
             // textBox2
             // 
@@ -201,12 +205,29 @@
             // 
             // panel_draw
             // 
+            this.panel_draw.Controls.Add(this.videoSourcePlayer);
             this.panel_draw.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_draw.Location = new System.Drawing.Point(0, 0);
             this.panel_draw.Name = "panel_draw";
             this.panel_draw.Size = new System.Drawing.Size(976, 761);
             this.panel_draw.TabIndex = 0;
             this.panel_draw.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_draw_Paint);
+            // 
+            // openFileDialog_colordata_camera_bmp
+            // 
+            this.openFileDialog_colordata_camera_bmp.FileName = "openFileDialog1";
+            // 
+            // videoSourcePlayer
+            // 
+            this.videoSourcePlayer.AutoSizeControl = true;
+            this.videoSourcePlayer.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.videoSourcePlayer.ForeColor = System.Drawing.Color.White;
+            this.videoSourcePlayer.Location = new System.Drawing.Point(327, 259);
+            this.videoSourcePlayer.Name = "videoSourcePlayer";
+            this.videoSourcePlayer.Size = new System.Drawing.Size(322, 242);
+            this.videoSourcePlayer.TabIndex = 1;
+            this.videoSourcePlayer.VideoSource = null;
+            this.videoSourcePlayer.Visible = false;
             // 
             // Form1
             // 
@@ -222,6 +243,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.panel_control.ResumeLayout(false);
             this.panel_control.PerformLayout();
+            this.panel_draw.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -232,11 +254,11 @@
         private System.Windows.Forms.Panel panel_control;
         private System.Windows.Forms.Button button_fusion;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button_colordata_camera_bmp;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox_colordata_camera_bmp;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label4;
@@ -244,6 +266,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel_draw;
+        private System.Windows.Forms.OpenFileDialog openFileDialog_colordata_camera_bmp;
+        private AForge.Controls.VideoSourcePlayer videoSourcePlayer;
     }
 }
 
