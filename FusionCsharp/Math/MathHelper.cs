@@ -348,7 +348,7 @@ namespace FusionCsharp.Math
                     //对颜色屏幕坐标进行取整，因为像素坐标只能是整数
                     WinCoordinate_cameracolor.X = (int)WinCoordinate_cameracolor.X;
                     WinCoordinate_cameracolor.Y = viewport_cameracolor[3] - (int)WinCoordinate_cameracolor.Y;//因为project得到的Y是OpenGL坐标
-                    colordata_mainview_bmp.SetPixel((int)WinCoordinate_mainview.X, (int)viewport_mainview[3] -(int)WinCoordinate_mainview.Y-1, colordata_camera_bmp.GetPixel((int)WinCoordinate_cameracolor.X, colordata_camera_bmp.Height -(int)WinCoordinate_cameracolor.Y));
+                    colordata_mainview_bmp.SetPixel((int)WinCoordinate_mainview.X, (int)viewport_cameracolor[3] -(int)WinCoordinate_mainview.Y-1, colordata_camera_bmp.GetPixel((int)WinCoordinate_cameracolor.X, (int)WinCoordinate_cameracolor.Y));
                     continue;
                     if (System.Math.Abs(WinCoordinate_cameradepth.Z - depthdata_one_camera) < 0.01)
                     {
