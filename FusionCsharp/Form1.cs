@@ -21,9 +21,11 @@ namespace FusionCsharp
         List<colorRGB> colordata_camera_txt = new List<colorRGB>();//摄像机背景图
         Bitmap colordata_camera_bmp;
         List<double> depthdata_camera = new List<double>();//摄像机深度图
+        MathHelper mh = new MathHelper();
 
         Bitmap curBitmap;
         FileVideoSource fileSource;//视频数据
+        List<relationshipMainviewCamera> list_relationshipMainviewCamera = new List<relationshipMainviewCamera>();//存储主视图与摄像头像素对应关系
 
 
         public Form1()
@@ -125,29 +127,6 @@ namespace FusionCsharp
             draw2(colordata_mainview_bmp);
         }
 
-        void test()
-        {
-            if(colordata_mainview_bmp!=null)
-            {
-                Rectangle rect = new Rectangle(0, 0, colordata_mainview_bmp.Width, colordata_mainview_bmp.Height);
-                System.Drawing.Imaging.BitmapData bmpData = colordata_mainview_bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_mainview_bmp.PixelFormat);
-                IntPtr ptr = bmpData.Scan0;
-                int bytes = colordata_mainview_bmp.Width * colordata_mainview_bmp.Height * 3;
-                byte[] rgbValues = new byte[bytes];
-                System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
-                double colorTemp = 0;
-                for (int i = 0; i < rgbValues.Length; i += 3)
-                {
-                    colorTemp = rgbValues[i + 2] * 0.299 + rgbValues[i + 1] * 0.587 + rgbValues[i] * 0.114;
-                    Color a = new Color();
-                    a = Color.DarkRed;
-                    rgbValues[i] = rgbValues[i + 1] = rgbValues[i + 2] = (byte)colorTemp;
-                    rgbValues[i] = rgbValues[i + 1] = rgbValues[i + 2] = a.R;
-                }
-                System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, bytes);
-                colordata_mainview_bmp.UnlockBits(bmpData);
-            }
-        }
 
         void draw2(Bitmap colordata_mainview_bmp)
         {
@@ -171,7 +150,7 @@ namespace FusionCsharp
             colordata_mainview_bmp = IO.IOhelper.readBMP("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\test.bmp");
             depthdata_mainview = IO.IOhelper.getdepthdata("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\depthdata.txt");
             depthdata_camera = IO.IOhelper.getdepthdata("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\摄像机\\depthdata.txt");
-            OpenVideoSource(fileSource);
+            OpenVideoSource3(fileSource);
 
         }
 
@@ -180,12 +159,12 @@ namespace FusionCsharp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="image"></param>
-        private void captureframe(object sender, ref Bitmap image)
+        private void captureframe3(object sender, ref Bitmap image)
         {
             if (image != null)
             {
                 colordata_camera_bmp = image;//获得视频帧数据
-
+                DateTime start = DateTime.Now;
                 //步骤二：读取主视图和摄像机图MVP矩阵
                 MathHelper mh = new MathHelper();
                 Matrix<double> modelviewMatrix_mainview = mh.getmodelviewMatrix_mainview();
@@ -198,14 +177,18 @@ namespace FusionCsharp
                 Vector<double> viewport_cameracolor = mh.getviewport_cameracolor();
                 viewport_cameracolor[2] = colordata_camera_bmp.Width;
                 viewport_cameracolor[3] = colordata_camera_bmp.Height;
+
                 //步骤三：视频与3D模型融合
                 mh.fusion2(1000, 800, depthdata_mainview, colordata_mainview_bmp, depthdata_camera, colordata_camera_bmp, modelviewMatrix_mainview, projectMatrix_mainview, viewport_mainview, modelviewMatrix_camera, projectMatrix_camera, viewport_cameradepth, viewport_cameracolor);
                 //步骤四：渲染绘制融合后的结果
                 draw2(colordata_mainview_bmp);
+                DateTime end = DateTime.Now;
+                TimeSpan ts = end - start;
+                string a = ts.TotalMilliseconds.ToString();
             }
         }
 
-        private void OpenVideoSource(IVideoSource source)
+        private void OpenVideoSource3(IVideoSource source)
         {
             // set busy cursor
             this.Cursor = Cursors.WaitCursor;
@@ -213,10 +196,70 @@ namespace FusionCsharp
             // start new video source
             videoSourcePlayer.VideoSource = source;
             videoSourcePlayer.Start();
-            videoSourcePlayer.NewFrame += new AForge.Controls.VideoSourcePlayer.NewFrameHandler(captureframe);
+            videoSourcePlayer.NewFrame += new AForge.Controls.VideoSourcePlayer.NewFrameHandler(captureframe3);
 
             this.Cursor = Cursors.Default;
         }
+
+        #endregion
+
+        #region 方法四：对方法三的改进，建立主视图像素与摄像头像素的关系
+        void execute4()
+        {
+            //步骤一：读取主视图背景图、深度图、摄像机背景图（后期换成视频）和深度图，存入本地
+            colordata_mainview_bmp = IO.IOhelper.readBMP("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\test.bmp");
+            depthdata_mainview = IO.IOhelper.getdepthdata("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\depthdata.txt");
+            depthdata_camera = IO.IOhelper.getdepthdata("F:\\OneDrive - AD\\台式机-study\\OpenGL\\坐标转换程序\\plan1WEB\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\摄像机\\depthdata.txt");
+
+
+            //步骤二：读取主视图和摄像机图MVP矩阵
+            Matrix<double> modelviewMatrix_mainview = mh.getmodelviewMatrix_mainview();
+            Matrix<double> projectMatrix_mainview = mh.getprojectMatrix_mainview();
+            Vector<double> viewport_mainview = mh.getviewport_mainview();
+
+            Matrix<double> modelviewMatrix_camera = mh.getmodelviewMatrix_camera();
+            Matrix<double> projectMatrix_camera = mh.getprojectMatrix_camera();
+            Vector<double> viewport_cameradepth = mh.getviewport_cameradepth();
+            Vector<double> viewport_cameracolor = mh.getviewport_cameracolor();
+
+            //步骤三：计算主视图与摄像头对应像素关系
+            list_relationshipMainviewCamera = mh.getRelationship(1000, 800, depthdata_mainview, colordata_mainview_bmp, depthdata_camera, colordata_camera_bmp, modelviewMatrix_mainview, projectMatrix_mainview, viewport_mainview, modelviewMatrix_camera, projectMatrix_camera, viewport_cameradepth, viewport_cameracolor);
+
+
+            OpenVideoSource4(fileSource);
+        }
+        private void OpenVideoSource4(IVideoSource source)
+        {
+            // set busy cursor
+            this.Cursor = Cursors.WaitCursor;
+
+            // start new video source
+            videoSourcePlayer.VideoSource = source;
+            videoSourcePlayer.Start();
+            videoSourcePlayer.NewFrame += new AForge.Controls.VideoSourcePlayer.NewFrameHandler(captureframe4);
+
+            this.Cursor = Cursors.Default;
+        }
+
+        private void captureframe4(object sender, ref Bitmap image)
+        {
+            if (image != null)
+            {
+                colordata_camera_bmp = image;//获得视频帧数据
+                DateTime start = DateTime.Now;
+                //步骤三：视频与3D模型融合
+                mh.funsion4(list_relationshipMainviewCamera, colordata_mainview_bmp, colordata_camera_bmp);
+                //步骤四：渲染绘制融合后的结果
+                draw2(colordata_mainview_bmp);
+                DateTime end = DateTime.Now;
+                TimeSpan ts = end - start;
+                string a = ts.TotalMilliseconds.ToString();
+            }
+        }
+
+
+
+
 
         #endregion
 
@@ -225,7 +268,8 @@ namespace FusionCsharp
         {
             //execute1();
             //execute2();
-            execute3();
+            //execute3();
+            execute4();
         }
 
         /// <summary>

@@ -231,7 +231,7 @@ namespace FusionCsharp.Math
         /// <returns></returns>
         public Vector<double> getviewport_cameracolor()
         {
-            double[] a = { 0.0, 0.0, 1000.0, 800.0 };
+            double[] a = { 0.0, 0.0, 1920.0, 1080.0 };
             return vb.DenseOfArray(a);
         }
 
@@ -312,39 +312,11 @@ namespace FusionCsharp.Math
             }
         }
 
-       public void fusion2(int WindowWidth, int WindowHeight, List<double> depthdata_mainview, Bitmap colordata_mainview_bmp, List<double> depthdata_camera, Bitmap colordata_camera_bmp, Matrix<double> modelviewMatrix_mainview, Matrix<double> projectMatrix_mainview, Vector<double> viewport_mainview, Matrix<double> modelviewMatrix_camera, Matrix<double> projectMatrix_camera, Vector<double> viewport_cameradepth, Vector<double> viewport_cameracolor)
+        public void fusion2(int WindowWidth, int WindowHeight, List<double> depthdata_mainview, Bitmap colordata_mainview_bmp, List<double> depthdata_camera, Bitmap colordata_camera_bmp, Matrix<double> modelviewMatrix_mainview, Matrix<double> projectMatrix_mainview, Vector<double> viewport_mainview, Matrix<double> modelviewMatrix_camera, Matrix<double> projectMatrix_camera, Vector<double> viewport_cameradepth, Vector<double> viewport_cameracolor)
         {
-            DateTime start = DateTime.Now;
             for (int i = 0; i < WindowWidth * WindowHeight; i++)
             {
 
-                //根据一维数组中的位置，转换成主视图屏幕上的X,Y坐标。
-                coordinate WinCoordinate_mainview = new coordinate(0.0, 0.0, 0.0);
-                int int_iWindowWidth = ((int)(i / WindowWidth)) * WindowWidth;
-                WinCoordinate_mainview.X = i - int_iWindowWidth;
-                WinCoordinate_mainview.Y = (int)(i / WindowWidth);
-                //从存储主视图屏幕深度信息的一维数组中取出对应的深度，即Z坐标。
-                WinCoordinate_mainview.Z = depthdata_mainview[i];
-                //从主视图屏幕的XYZ坐标反算到局部坐标
-
-                coordinate ObjectCoordinate = new coordinate(0.0, 0.0, 0.0);
-                //ObjectCoordinate = Unproject(WinCoordinate_mainview, modelviewMatrix_mainview, projectMatrix_mainview, viewport_mainview, ObjectCoordinate);
-                //再从局部坐标正算到摄像机的深度屏幕坐标，这样就得到了主视图屏幕上一点在摄像机的屏幕坐标和深度。
-                coordinate WinCoordinate_cameradepth = new coordinate(0.0, 0.0, 0.0);
-
-                WinCoordinate_cameradepth = Project(ObjectCoordinate, modelviewMatrix_camera, projectMatrix_camera, viewport_cameradepth, WinCoordinate_cameradepth);
-                //对深度屏幕坐标进行取整，因为像素坐标只能是整数
-                WinCoordinate_cameradepth.X = (int)WinCoordinate_cameradepth.X;
-                WinCoordinate_cameradepth.Y = WindowHeight - (int)WinCoordinate_cameradepth.Y;//因为project得到的Y是OpenGL坐标
-
-            }
-            DateTime end = DateTime.Now;
-            TimeSpan ts = end - start;
-            string a = ts.TotalMilliseconds.ToString();
-
-            for (int i = 0; i < WindowWidth * WindowHeight; i++)
-            {
-                
                 //根据一维数组中的位置，转换成主视图屏幕上的X,Y坐标。
                 coordinate WinCoordinate_mainview = new coordinate(0.0, 0.0, 0.0);
                 int int_iWindowWidth = ((int)(i / WindowWidth)) * WindowWidth;
@@ -515,5 +487,99 @@ namespace FusionCsharp.Math
             colordata_mainview_bmp.UnlockBits(bmpData);
         }
 
+        public void funsion4(List<relationshipMainviewCamera> list_relationshipMainviewCamera, Bitmap colordata_mainview_bmp, Bitmap colordata_camera_bmp)
+        {
+            //内存法
+            //Bitmap newbitmap = colordata_mainview_bmp.Clone() as Bitmap;
+
+            Rectangle rect_mainview = new Rectangle(0, 0, colordata_mainview_bmp.Width, colordata_mainview_bmp.Height);
+            System.Drawing.Imaging.BitmapData bmpdata_mainview = colordata_mainview_bmp.LockBits(rect_mainview, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_mainview_bmp.PixelFormat);
+            IntPtr ptr_mainview = bmpdata_mainview.Scan0;
+            int bytes_mainview = colordata_mainview_bmp.Width * colordata_mainview_bmp.Height * 3;
+            byte[] rgbvalues_mainview = new byte[bytes_mainview];
+            System.Runtime.InteropServices.Marshal.Copy(ptr_mainview, rgbvalues_mainview, 0, bytes_mainview);
+
+            Rectangle rect_camera = new Rectangle(0, 0, colordata_camera_bmp.Width, colordata_camera_bmp.Height);
+            System.Drawing.Imaging.BitmapData bmpdata_camera = colordata_camera_bmp.LockBits(rect_camera, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_camera_bmp.PixelFormat);
+            IntPtr ptr_camera = bmpdata_camera.Scan0;
+            int bytes_camera = colordata_camera_bmp.Width * colordata_camera_bmp.Height * 3;
+            byte[] rgbvalues_camera = new byte[bytes_camera];
+            System.Runtime.InteropServices.Marshal.Copy(ptr_camera, rgbvalues_camera, 0, bytes_camera);
+
+
+            foreach (var relationship in list_relationshipMainviewCamera)
+            {
+                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 2] =
+            rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 2];
+                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 1] =
+                    rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 1];
+                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3] =
+                    rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3];
+
+                ////提取像素法
+                //colordata_mainview_bmp.SetPixel(relationship.Mainview_x, relationship.Mainview_y, colordata_camera_bmp.GetPixel(relationship.Camera_x, relationship.Camera_y));
+
+            }
+            System.Runtime.InteropServices.Marshal.Copy(rgbvalues_mainview, 0, ptr_mainview, bytes_mainview);
+            colordata_mainview_bmp.UnlockBits(bmpdata_mainview);
+            System.Runtime.InteropServices.Marshal.Copy(rgbvalues_camera, 0, ptr_camera, bytes_camera);
+            colordata_camera_bmp.UnlockBits(bmpdata_camera);
+        }
+
+        public List<relationshipMainviewCamera> getRelationship(int WindowWidth, int WindowHeight, List<double> depthdata_mainview, Bitmap colordata_mainview_bmp, List<double> depthdata_camera, Bitmap colordata_camera_bmp, Matrix<double> modelviewMatrix_mainview, Matrix<double> projectMatrix_mainview, Vector<double> viewport_mainview, Matrix<double> modelviewMatrix_camera, Matrix<double> projectMatrix_camera, Vector<double> viewport_cameradepth, Vector<double> viewport_cameracolor)
+        {
+            List<relationshipMainviewCamera> list_relationshipMainviewCamera = new List<relationshipMainviewCamera>();
+            for (int i = 0; i < WindowWidth * WindowHeight; i++)
+            {
+
+                //根据一维数组中的位置，转换成主视图屏幕上的X,Y坐标。
+                coordinate WinCoordinate_mainview = new coordinate(0.0, 0.0, 0.0);
+                int int_iWindowWidth = ((int)(i / WindowWidth)) * WindowWidth;
+                WinCoordinate_mainview.X = i - int_iWindowWidth;
+                WinCoordinate_mainview.Y = (int)(i / WindowWidth);
+                //从存储主视图屏幕深度信息的一维数组中取出对应的深度，即Z坐标。
+                WinCoordinate_mainview.Z = depthdata_mainview[i];
+                //从主视图屏幕的XYZ坐标反算到局部坐标
+
+                coordinate ObjectCoordinate = new coordinate(0.0, 0.0, 0.0);
+                ObjectCoordinate = Unproject(WinCoordinate_mainview, modelviewMatrix_mainview, projectMatrix_mainview, viewport_mainview, ObjectCoordinate);
+                //再从局部坐标正算到摄像机的深度屏幕坐标，这样就得到了主视图屏幕上一点在摄像机的屏幕坐标和深度。
+                coordinate WinCoordinate_cameradepth = new coordinate(0.0, 0.0, 0.0);
+
+
+                WinCoordinate_cameradepth = Project(ObjectCoordinate, modelviewMatrix_camera, projectMatrix_camera, viewport_cameradepth, WinCoordinate_cameradepth);
+                //对深度屏幕坐标进行取整，因为像素坐标只能是整数
+                WinCoordinate_cameradepth.X = (int)WinCoordinate_cameradepth.X;
+                WinCoordinate_cameradepth.Y = WindowHeight - (int)WinCoordinate_cameradepth.Y;//因为project得到的Y是OpenGL坐标
+
+
+
+                if (WinCoordinate_cameradepth.X > 0 && WinCoordinate_cameradepth.X < WindowWidth
+                    && WinCoordinate_cameradepth.Y > 0 && WinCoordinate_cameradepth.Y < WindowHeight
+                    && WinCoordinate_cameradepth.Z > 0)
+                {
+
+                    //将得到的摄像机深度屏幕坐标XY转换成一维数组中的位置
+                    double depthdata_one_location_camera = WinCoordinate_cameradepth.Y * WindowWidth + WinCoordinate_cameradepth.X;
+                    //取出摄像机深度图里面对应像素的深度
+                    double depthdata_one_camera = depthdata_camera[(int)depthdata_one_location_camera];
+
+                    //从局部坐标正算到摄像机的颜色屏幕坐标，这样就得到了摄像机视频应该映射的屏幕坐标。
+                    coordinate WinCoordinate_cameracolor = new coordinate(0.0, 0.0, 0.0);
+                    WinCoordinate_cameracolor = Project(ObjectCoordinate, modelviewMatrix_camera, projectMatrix_camera, viewport_cameracolor, WinCoordinate_cameracolor);
+                    //对颜色屏幕坐标进行取整，因为像素坐标只能是整数
+                    WinCoordinate_cameracolor.X = (int)WinCoordinate_cameracolor.X;
+                    WinCoordinate_cameracolor.Y = viewport_cameracolor[3] - (int)WinCoordinate_cameracolor.Y;//因为project得到的Y是OpenGL坐标
+                    relationshipMainviewCamera relationship = new relationshipMainviewCamera();
+                    relationship.Mainview_x = (int)WinCoordinate_mainview.X;
+                    relationship.Mainview_y = (int)viewport_mainview[3] - (int)WinCoordinate_mainview.Y - 1;
+                    relationship.Camera_x = (int)WinCoordinate_cameracolor.X;
+                    relationship.Camera_y = (int)viewport_cameracolor[3] - (int)WinCoordinate_cameracolor.Y;
+                    list_relationshipMainviewCamera.Add(relationship);
+                }
+
+            }
+            return list_relationshipMainviewCamera;
+        }
     }
 }
