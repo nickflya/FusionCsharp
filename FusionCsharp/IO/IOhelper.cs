@@ -16,41 +16,7 @@ namespace FusionCsharp.IO
     {
 
         #region 读取TXT文件
-
-        //得到主视点和摄像机颜色图
-        public static List<colorRGB> getcolordata(string filename)
-        {
-            List<colorRGB> colorrgb_list = new List<colorRGB>();
-            colorRGB colorrgb = new colorRGB(0.0, 0.0, 0.0);
-
-            StreamReader sr = File.OpenText(filename);
-            string rgb_string = "";
-            try
-            {
-                while ((rgb_string = sr.ReadLine()) != null)
-                {
-                    colorrgb = new colorRGB(0.0, 0.0, 0.0);
-                    double rgb_double = double.Parse(rgb_string);
-                    long rgb = (long)rgb_double;
-                    colorrgb.R = (rgb >> 16) & 0xff;
-                    colorrgb.G = (rgb >> 8) & 0xff;
-                    colorrgb.B = rgb & 0xff;
-                    colorrgb_list.Add(colorrgb);
-                }
-
-            }
-            catch (System.Exception ex)
-            {
-
-            }
-            finally
-            {
-                sr.Close();
-            }
-
-            return colorrgb_list;
-
-        }
+        
 
         /// <summary>
         /// 得到主视图和摄像机的深度图

@@ -30,8 +30,6 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel_control = new System.Windows.Forms.Panel();
-            this.timeBox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.button_fusion = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button_colordata_camera_bmp = new System.Windows.Forms.Button();
@@ -75,8 +73,6 @@
             // 
             // panel_control
             // 
-            this.panel_control.Controls.Add(this.timeBox);
-            this.panel_control.Controls.Add(this.label5);
             this.panel_control.Controls.Add(this.button_fusion);
             this.panel_control.Controls.Add(this.button4);
             this.panel_control.Controls.Add(this.button_colordata_camera_bmp);
@@ -95,23 +91,6 @@
             this.panel_control.Name = "panel_control";
             this.panel_control.Size = new System.Drawing.Size(304, 761);
             this.panel_control.TabIndex = 6;
-            // 
-            // timeBox
-            // 
-            this.timeBox.Location = new System.Drawing.Point(104, 508);
-            this.timeBox.Name = "timeBox";
-            this.timeBox.Size = new System.Drawing.Size(75, 21);
-            this.timeBox.TabIndex = 20;
-            this.timeBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(104, 489);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 12);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "运行时间：";
             // 
             // button_fusion
             // 
@@ -286,11 +265,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel_draw;
         private System.Windows.Forms.OpenFileDialog openFileDialog_colordata_camera_bmp;
-        private AForge.Controls.VideoSourcePlayer videoSourcePlayer;
-        private System.Windows.Forms.Label label5;
-        public System.Windows.Forms.TextBox timeBox;
+        public System.Windows.Forms.Panel panel_draw;
+        public AForge.Controls.VideoSourcePlayer videoSourcePlayer;
     }
 }
 

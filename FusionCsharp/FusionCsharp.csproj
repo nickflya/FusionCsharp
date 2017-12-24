@@ -92,9 +92,11 @@
     </Compile>
     <Compile Include="IO\IOhelper.cs" />
     <Compile Include="Math\MathHelper.cs" />
-    <Compile Include="model\colorRGB.cs" />
     <Compile Include="model\coordinate.cs" />
     <Compile Include="model\relationshipMainviewCamera.cs" />
+    <Compile Include="model\viewmodel\CameraView.cs" />
+    <Compile Include="model\viewmodel\MainView.cs" />
+    <Compile Include="model\viewmodel\View.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
