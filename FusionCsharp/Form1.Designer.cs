@@ -44,8 +44,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panel_draw = new System.Windows.Forms.Panel();
-            this.videoSourcePlayer = new AForge.Controls.VideoSourcePlayer();
+            this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.openFileDialog_colordata_camera_bmp = new System.Windows.Forms.OpenFileDialog();
+            this.videoSourcePlayer2 = new AForge.Controls.VideoSourcePlayer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -205,7 +206,8 @@
             // 
             // panel_draw
             // 
-            this.panel_draw.Controls.Add(this.videoSourcePlayer);
+            this.panel_draw.Controls.Add(this.videoSourcePlayer2);
+            this.panel_draw.Controls.Add(this.videoSourcePlayer1);
             this.panel_draw.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_draw.Location = new System.Drawing.Point(0, 0);
             this.panel_draw.Name = "panel_draw";
@@ -213,21 +215,33 @@
             this.panel_draw.TabIndex = 0;
             this.panel_draw.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_draw_Paint);
             // 
-            // videoSourcePlayer
+            // videoSourcePlayer1
             // 
-            this.videoSourcePlayer.AutoSizeControl = true;
-            this.videoSourcePlayer.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.videoSourcePlayer.ForeColor = System.Drawing.Color.White;
-            this.videoSourcePlayer.Location = new System.Drawing.Point(327, 259);
-            this.videoSourcePlayer.Name = "videoSourcePlayer";
-            this.videoSourcePlayer.Size = new System.Drawing.Size(322, 242);
-            this.videoSourcePlayer.TabIndex = 1;
-            this.videoSourcePlayer.VideoSource = null;
-            this.videoSourcePlayer.Visible = false;
+            this.videoSourcePlayer1.AutoSizeControl = true;
+            this.videoSourcePlayer1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.videoSourcePlayer1.ForeColor = System.Drawing.Color.White;
+            this.videoSourcePlayer1.Location = new System.Drawing.Point(327, 259);
+            this.videoSourcePlayer1.Name = "videoSourcePlayer1";
+            this.videoSourcePlayer1.Size = new System.Drawing.Size(322, 242);
+            this.videoSourcePlayer1.TabIndex = 1;
+            this.videoSourcePlayer1.VideoSource = null;
+            this.videoSourcePlayer1.Visible = false;
             // 
             // openFileDialog_colordata_camera_bmp
             // 
             this.openFileDialog_colordata_camera_bmp.FileName = "openFileDialog1";
+            // 
+            // videoSourcePlayer2
+            // 
+            this.videoSourcePlayer2.AutoSizeControl = true;
+            this.videoSourcePlayer2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.videoSourcePlayer2.ForeColor = System.Drawing.Color.White;
+            this.videoSourcePlayer2.Location = new System.Drawing.Point(327, 259);
+            this.videoSourcePlayer2.Name = "videoSourcePlayer2";
+            this.videoSourcePlayer2.Size = new System.Drawing.Size(322, 242);
+            this.videoSourcePlayer2.TabIndex = 2;
+            this.videoSourcePlayer2.VideoSource = null;
+            this.videoSourcePlayer2.Visible = false;
             // 
             // Form1
             // 
@@ -267,7 +281,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openFileDialog_colordata_camera_bmp;
         public System.Windows.Forms.Panel panel_draw;
-        public AForge.Controls.VideoSourcePlayer videoSourcePlayer;
+        public AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
+        public AForge.Controls.VideoSourcePlayer videoSourcePlayer2;
     }
 }
 

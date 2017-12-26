@@ -150,131 +150,78 @@ namespace FusionCsharp.Math
         }
 
         /// <summary>
-        /// 得到主视图的视图矩阵
+        /// 得到矩阵
         /// </summary>
         /// <returns></returns>
-        public Matrix<double> getmodelviewMatrix_mainview()
+        public Matrix<double> getMatrix(double[,] Matrix)
         {
-            double[,] a = { { 0.87274477586533461,-0.31853087327850532,0.36993869622979397,102.50361835799191  },
-                {0.10809792746051593, 0.86508111464077375,0.48984640773472798,44.104662708586204},
-                {-0.47605818371130654,-0.38752128697699839,0.78942755073609061, -986.81032604767370},
-                {0.00000000000000000, 0.00000000000000000,0.00000000000000000,1.0000000000000000} };
-
-            return mb.DenseOfArray(a);
-        }
-
-        /// <summary>
-        /// 得到摄像机视图矩阵
-        /// </summary>
-        /// <returns></returns>
-        public Matrix<double> getmodelviewMatrix_camera()
-        {
-            double[,] a = { { 0.74775775165414804,-0.37934716130469248, 0.54493492827236278,95.762009173457713 },
-                {0.092463160613615841,0.87221644200955561,0.48030099127269366,-8.2428991067991237},
-                {-0.65750202187557893,-0.30876238355451124,0.68728224313688080,-776.94778055543122},
-                {0.00000000000000000,0.00000000000000000,0.00000000000000000,1.0000000000000000} };
-            return mb.DenseOfArray(a);
+            return mb.DenseOfArray(Matrix);
         }
 
 
         /// <summary>
-        /// 得到主视图投影矩阵
+        /// 得到向量
         /// </summary>
         /// <returns></returns>
-        public Matrix<double> getprojectMatrix_mainview()
-        {
-            double[,] a = { { 3.0769231897839462,0.00000000000000000, 0.00000000000000000,0.00000000000000000},
-                {0.00000000000000000,3.8461539872299335,0.00000000000000000,0.00000000000000000},
-                {0.00000000000000000,0.00000000000000000,-2.6190933518446222,-2180.4271028338017},
-                {0.00000000000000000,0.00000000000000000,-1.0000000000000000,0.00000000000000000} };
-
-            return mb.DenseOfArray(a);
-        }
-
-        /// <summary>
-        /// 得到摄像机的投影矩阵
-        /// </summary>
-        /// <returns></returns>
-        public Matrix<double> getprojectMatrix_camera()
-        {
-            double[,] a = { { 3.0769231897839462, 0.00000000000000000, 0.00000000000000000, 0.00000000000000000 },
-                {0.00000000000000000,3.8461539872299335,0.00000000000000000,0.00000000000000000},
-                {0.00000000000000000,0.00000000000000000,-1.9028681049656828,-1082.8718693111402 },
-                {0.00000000000000000,0.00000000000000000,-1.0000000000000000,0.00000000000000000} };
-
-            return mb.DenseOfArray(a);
-        }
-
-        /// <summary>
-        /// 得到主视图视点矩阵
-        /// </summary>
-        /// <returns></returns>
-        public Vector<double> getviewport_mainview()
+        public Vector<double> getVector(double[] vector)
         {
             double[] a = { 0.0, 0.0, 1000.0, 800.0 };
             return vb.DenseOfArray(a);
         }
-
-        /// <summary>
-        /// 得到摄像机深度图的视口矩阵
-        /// </summary>
-        /// <returns></returns>
-        public Vector<double> getviewport_cameradepth()
-        {
-            double[] a = { 0.0, 0.0, 1000.0, 800.0 };
-            return vb.DenseOfArray(a);
-        }
-
-        /// <summary>
-        /// 得到摄像机背景图的视口矩阵
-        /// </summary>
-        /// <returns></returns>
-        public Vector<double> getviewport_cameracolor()
-        {
-            double[] a = { 0.0, 0.0, 1920.0, 1080.0 };
-            return vb.DenseOfArray(a);
-        }        
 
         public void funsion4(List<relationshipMainviewCamera> list_relationshipMainviewCamera, Bitmap colordata_mainview_bmp, Bitmap colordata_camera_bmp)
         {
             //内存法
-            //Bitmap newbitmap = colordata_mainview_bmp.Clone() as Bitmap;
-
-            Rectangle rect_mainview = new Rectangle(0, 0, colordata_mainview_bmp.Width, colordata_mainview_bmp.Height);
-            System.Drawing.Imaging.BitmapData bmpdata_mainview = colordata_mainview_bmp.LockBits(rect_mainview, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_mainview_bmp.PixelFormat);
-            IntPtr ptr_mainview = bmpdata_mainview.Scan0;
-            int bytes_mainview = colordata_mainview_bmp.Width * colordata_mainview_bmp.Height * 3;
-            byte[] rgbvalues_mainview = new byte[bytes_mainview];
-            System.Runtime.InteropServices.Marshal.Copy(ptr_mainview, rgbvalues_mainview, 0, bytes_mainview);
-
-            Rectangle rect_camera = new Rectangle(0, 0, colordata_camera_bmp.Width, colordata_camera_bmp.Height);
-            System.Drawing.Imaging.BitmapData bmpdata_camera = colordata_camera_bmp.LockBits(rect_camera, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_camera_bmp.PixelFormat);
-            IntPtr ptr_camera = bmpdata_camera.Scan0;
-            int bytes_camera = colordata_camera_bmp.Width * colordata_camera_bmp.Height * 3;
-            byte[] rgbvalues_camera = new byte[bytes_camera];
-            System.Runtime.InteropServices.Marshal.Copy(ptr_camera, rgbvalues_camera, 0, bytes_camera);
-
-
-            foreach (var relationship in list_relationshipMainviewCamera)
+            System.Drawing.Imaging.BitmapData bmpdata_mainview = null;
+            System.Drawing.Imaging.BitmapData bmpdata_camera = null;
+            try
             {
-                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 2] =
-            rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 2];
-                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 1] =
-                    rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 1];
-                rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3] =
-                    rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3];
 
-                ////提取像素法
-                //colordata_mainview_bmp.SetPixel(relationship.Mainview_x, relationship.Mainview_y, colordata_camera_bmp.GetPixel(relationship.Camera_x, relationship.Camera_y));
 
+                Rectangle rect_mainview = new Rectangle(0, 0, colordata_mainview_bmp.Width, colordata_mainview_bmp.Height);
+                bmpdata_mainview = colordata_mainview_bmp.LockBits(rect_mainview, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_mainview_bmp.PixelFormat);
+                IntPtr ptr_mainview = bmpdata_mainview.Scan0;
+                int bytes_mainview = colordata_mainview_bmp.Width * colordata_mainview_bmp.Height * 3;
+                byte[] rgbvalues_mainview = new byte[bytes_mainview];
+                System.Runtime.InteropServices.Marshal.Copy(ptr_mainview, rgbvalues_mainview, 0, bytes_mainview);
+
+                Rectangle rect_camera = new Rectangle(0, 0, colordata_camera_bmp.Width, colordata_camera_bmp.Height);
+                bmpdata_camera = colordata_camera_bmp.LockBits(rect_camera, System.Drawing.Imaging.ImageLockMode.ReadWrite, colordata_camera_bmp.PixelFormat);
+                IntPtr ptr_camera = bmpdata_camera.Scan0;
+                int bytes_camera = colordata_camera_bmp.Width * colordata_camera_bmp.Height * 3;
+                byte[] rgbvalues_camera = new byte[bytes_camera];
+                System.Runtime.InteropServices.Marshal.Copy(ptr_camera, rgbvalues_camera, 0, bytes_camera);
+
+
+                foreach (var relationship in list_relationshipMainviewCamera)
+                {
+                    rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 2] =
+                rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 2];
+                    rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3 + 1] =
+                        rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3 + 1];
+                    rgbvalues_mainview[relationship.Mainview_y * bmpdata_mainview.Stride + relationship.Mainview_x * 3] =
+                        rgbvalues_camera[relationship.Camera_y * bmpdata_camera.Stride + relationship.Camera_x * 3];
+
+                    ////提取像素法
+                    //colordata_mainview_bmp.SetPixel(relationship.Mainview_x, relationship.Mainview_y, colordata_camera_bmp.GetPixel(relationship.Camera_x, relationship.Camera_y));
+
+                }
+                System.Runtime.InteropServices.Marshal.Copy(rgbvalues_mainview, 0, ptr_mainview, bytes_mainview);
+                colordata_mainview_bmp.UnlockBits(bmpdata_mainview);
+                //System.Runtime.InteropServices.Marshal.Copy(rgbvalues_camera, 0, ptr_camera, bytes_camera);
+                colordata_camera_bmp.UnlockBits(bmpdata_camera);
             }
-            System.Runtime.InteropServices.Marshal.Copy(rgbvalues_mainview, 0, ptr_mainview, bytes_mainview);
-            colordata_mainview_bmp.UnlockBits(bmpdata_mainview);
-            System.Runtime.InteropServices.Marshal.Copy(rgbvalues_camera, 0, ptr_camera, bytes_camera);
-            colordata_camera_bmp.UnlockBits(bmpdata_camera);
+            catch (System.Exception ex)
+            {
+                //if (bmpdata_mainview != null)
+                //    colordata_mainview_bmp.UnlockBits(bmpdata_mainview);
+                //if (bmpdata_camera != null)
+                //    colordata_camera_bmp.UnlockBits(bmpdata_camera);
+            }
+
         }
 
-        public List<relationshipMainviewCamera> getRelationship(int WindowWidth, int WindowHeight, List<double> depthdata_mainview, List<double> depthdata_camera,  Matrix<double> modelviewMatrix_mainview, Matrix<double> projectMatrix_mainview, Vector<double> viewport_mainview, Matrix<double> modelviewMatrix_camera, Matrix<double> projectMatrix_camera, Vector<double> viewport_cameradepth, Vector<double> viewport_cameracolor)
+        public List<relationshipMainviewCamera> getRelationship(int WindowWidth, int WindowHeight, List<double> depthdata_mainview, List<double> depthdata_camera, Matrix<double> modelviewMatrix_mainview, Matrix<double> projectMatrix_mainview, Vector<double> viewport_mainview, Matrix<double> modelviewMatrix_camera, Matrix<double> projectMatrix_camera, Vector<double> viewport_cameradepth, Vector<double> viewport_cameracolor)
         {
             List<relationshipMainviewCamera> list_relationshipMainviewCamera = new List<relationshipMainviewCamera>();
             for (int i = 0; i < WindowWidth * WindowHeight; i++)

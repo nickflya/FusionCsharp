@@ -17,7 +17,7 @@ namespace FusionCsharp.model.viewmodel
         private Bitmap colordata = null;//每一帧的图像
         private FileVideoSource fileSource = null;//视频数据
         private List<relationshipMainviewCamera> list_relationshipMainviewCamera = new List<relationshipMainviewCamera>();//存储主视图与摄像头像素对应关系
-        private bool isActive = false;//是否激活 
+        private bool isActive = true;//是否激活 
         private Vector<double> viewport_colordata = null;//视频帧的viewport
         private Vector<double> viewport_depthdata = null;//深度图的viewport
         public int Id { get => id; set => id = value; }
@@ -27,5 +27,10 @@ namespace FusionCsharp.model.viewmodel
         public Vector<double> Viewport_colordata { get => viewport_colordata; set => viewport_colordata = value; }
         public Vector<double> Viewport_depthdata { get => viewport_depthdata; set => viewport_depthdata = value; }
         public Bitmap Colordata { get => colordata; set => colordata = value; }
+
+        public CameraView(int id)
+        {
+            Id = id;
+        }
     }
 }
