@@ -24,12 +24,12 @@ namespace FusionCsharp
 
         public Form1()
         {
-            cameraview1.FileSource = new AForge.Video.DirectShow.FileVideoSource("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\摄像机\\movie.avi");
+            cameraview1.FileSource = new AForge.Video.DirectShow.FileVideoSource("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\data\\摄像机\\movie.avi");
             
             //步骤一：读取主视图背景图、深度图、摄像机背景图（后期换成视频）和深度图，存入本地
-            mainview.Colordata = IO.IOhelper.readBMP("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\test.bmp");
-            mainview.Depthdata = IO.IOhelper.getdepthdata("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\主视图\\depthdata.txt");
-            cameraview1.Depthdata = IO.IOhelper.getdepthdata("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\bin\\Debug\\newdata2\\摄像机\\depthdata.txt");
+            mainview.Colordata = IO.IOhelper.readBMP("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\data\\主视图\\test.bmp");
+            mainview.Depthdata = IO.IOhelper.getdepthdata("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\data\\主视图\\depthdata.txt");
+            cameraview1.Depthdata = IO.IOhelper.getdepthdata("C:\\Users\\huahai\\Documents\\GitHub\\FusionCsharp\\FusionCsharp\\data\\摄像机\\depthdata.txt");
             
 
             //步骤二：读取主视图和摄像机图MVP矩阵
